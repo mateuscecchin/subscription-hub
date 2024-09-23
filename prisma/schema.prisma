@@ -61,6 +61,8 @@ model Version {
   createdAt  DateTime  @default(now())
   outdatedAt DateTime?
   version    String
+
+  @@map("version")
 }
 
 enum Roles {
