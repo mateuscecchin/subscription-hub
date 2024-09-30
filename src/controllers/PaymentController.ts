@@ -5,7 +5,7 @@ import { Request } from "../@types/Request";
 import { db } from "../configs/prisma";
 import { UserRepository } from "../repositories/UserRepository";
 
-const NGROK_URL = process.env.NGROK_URL;
+const VERCEL_URL = process.env.VERCEL_URL;
 
 export class PaymentController {
   private client: MercadoPagoConfig;
@@ -15,7 +15,6 @@ export class PaymentController {
       accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!,
       options: {
         timeout: 5000,
-        idempotencyKey: "abc",
       },
     });
   }
@@ -56,7 +55,7 @@ export class PaymentController {
         payer: {
           email: body.email,
         },
-        notification_url: `${NGROK_URL}/webhook`,
+        notification_url: `${VERCEL_URL}/webhook`,
       };
 
       const requestOptions = { idempotencyKey: uuidv4() };
@@ -73,10 +72,10 @@ export class PaymentController {
 
       await db.planHistory.create({
         data: {
-          paymentId: response.id!.toString(), // ID do pagamento do Mercado Pago
-          userId: user.id, // ID do usuário responsável
-          planId: body.planId, // ID do plano
-          status: "pending", // Definindo o status como "pending"
+          paymentId: response.id!.toString(), 
+          userId: user.id, 
+          planId: body.planId,
+          status: "pending", 
         },
       });
 
