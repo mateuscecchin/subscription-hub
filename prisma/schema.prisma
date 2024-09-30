@@ -48,14 +48,15 @@ model PlanHistory {
   id        String   @id @default(uuid())
   planId    String
   userId    String
+  paymentId String
   createdAt DateTime @default(now())
+  status    String   @default("pending") // Adicionando a coluna de status com valor padrão "pending"
 
   plan Plan? @relation(fields: [planId], references: [id])
   user User? @relation(fields: [userId], references: [id])
 
   @@map("history")
 }
-
 model Version {
   id         String    @id @default(uuid())
   createdAt  DateTime  @default(now())

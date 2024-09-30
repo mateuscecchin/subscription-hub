@@ -11,6 +11,7 @@ import { authenticate } from "../middlewares/authentication";
 import { VersionRepository } from "../repositories/VersionRepository";
 import { VersionService } from "../services/VersionService";
 import { VersionController } from "../controllers/VersionController";
+import { PaymentController } from "../controllers/PaymentController";
 
 const userRepository = new UserRepository();
 const planRepository = new PlanRepository();
@@ -24,12 +25,20 @@ const versionSerivce = new VersionService(versionRepository);
 const authController = new AuthController(authService);
 const userController = new UserController(userService, planService);
 const planController = new PlanController(planService);
+const paymentController = new PaymentController(userRepository);
 const versionController = new VersionController(versionSerivce);
 
 export const routes = Router();
 
+routes.post("/", (req, res) => {
+  res.send("Hello World")
+});
 routes.post("/user", (req, res) => userController.create(req, res));
 routes.post("/login", (req, res) => authController.logIn(req, res));
+routes.post("/payment", (req, res) => paymentController.createPayment(req, res));
+
+routes.post("/webhook", (req, res) => paymentController.handleWebhook(req, res));
+
 routes.get("/plan", (req, res) => planController.findAll(req, res));
 routes.get("/version", (req, res) =>
   versionController.findLastVersion(req, res)
