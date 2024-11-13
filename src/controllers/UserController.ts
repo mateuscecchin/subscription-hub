@@ -12,9 +12,9 @@ export class UserController {
 
   async create(req: Request, res: Response) {
     try {
-      const { body, ip } = req;
+      const { body } = req;
 
-      await this.userService.create({ ...body, role: "UNKNOWN", ip });
+      await this.userService.create({ ...body, role: "UNKNOWN" });
 
       res.status(201).json({ message: "Usuario criado com sucesso!" });
     } catch (err) {
@@ -34,10 +34,28 @@ export class UserController {
     }
   }
 
+  async findAll(req: Request, res: Response) {
+    try {
+      const users = await this.userService.findAll();
+
+      res.status(200).json(users);
+    } catch (err) {
+      res.status(500).json({ message: "Erro ao buscar usuarios" });
+      console.log("[ERROR USER ME]", err);
+    }
+  }
+
   async plan(req: Request, res: Response) {
     try {
-      const { planId } = req.body;
-      const { id, planEndAt, planStartAt } = req.user!;
+      const { planId, userId } = req.body;
+
+      const user = await this.userService.findUserById(userId);
+
+      if (!user) {
+        throw new Error("Usuario nao encontrado");
+      }
+
+      const { id, planEndAt, planStartAt } = user;
 
       const currentDate = new Date();
 

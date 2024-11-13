@@ -26,6 +26,10 @@ export class UserService {
     return await this.userRepository.findById(id);
   }
 
+  async findAll() {
+    return await this.userRepository.findAll();
+  }
+
   async subscribePlan({
     id,
     planId,
