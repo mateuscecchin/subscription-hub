@@ -26,4 +26,8 @@ export class UserRepository {
   async findById(id: string) {
     return await db.user.findUnique({ where: { id } });
   }
+
+  async delete(id: string) {
+    return await db.user.delete({ where: { id } });
+  }
 }

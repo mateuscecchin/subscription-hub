@@ -41,4 +41,5 @@ routes.get("/plan/check", (req, res) => planController.check(req, res));
 routes.post("/plan", (req, res) => planController.create(req, res));
 routes.get("/user/me", (req, res) => userController.me(req, res));
 routes.get("/user", (req, res) => userController.findAll(req, res));
+routes.delete("/user", (req, res) => userController.delete(req, res));
 routes.post("/user/plan", (req, res) => userController.plan(req, res));

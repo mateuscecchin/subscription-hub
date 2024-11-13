@@ -45,6 +45,19 @@ export class UserController {
     }
   }
 
+  async delete(req: Request, res: Response) {
+    try {
+      const { userId } = req.body;
+
+      await this.userService.delete(userId);
+
+      res.status(200);
+    } catch (err) {
+      res.status(500).json({ message: "Erro ao deletar usuario" });
+      console.log("[ERROR USER DELETE]", err);
+    }
+  }
+
   async plan(req: Request, res: Response) {
     try {
       const { planId, userId } = req.body;

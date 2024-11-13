@@ -30,6 +30,10 @@ export class UserService {
     return await this.userRepository.findAll();
   }
 
+  async delete(id: string) {
+    return await this.userRepository.delete(id);
+  }
+
   async subscribePlan({
     id,
     planId,
