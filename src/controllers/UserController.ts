@@ -47,7 +47,7 @@ export class UserController {
 
   async delete(req: Request, res: Response) {
     try {
-      const { userId } = req.params;
+      const { userId } = req.query as any;
 
       await this.userService.delete(userId);
 
