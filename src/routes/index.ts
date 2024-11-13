@@ -28,6 +28,7 @@ const versionController = new VersionController(versionSerivce);
 
 export const routes = Router();
 
+routes.post("/user", (req, res) => userController.create(req, res));
 routes.post("/login", (req, res) => authController.logIn(req, res));
 routes.get("/plan", (req, res) => planController.findAll(req, res));
 routes.get("/version", (req, res) =>
@@ -36,7 +37,6 @@ routes.get("/version", (req, res) =>
 
 routes.use("/", authenticate);
 
-routes.post("/user", (req, res) => userController.create(req, res));
 routes.get("/plan/check", (req, res) => planController.check(req, res));
 routes.post("/plan", (req, res) => planController.create(req, res));
 routes.get("/user/me", (req, res) => userController.me(req, res));
