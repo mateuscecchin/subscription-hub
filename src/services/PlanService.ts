@@ -1,9 +1,10 @@
 import { Plan } from "@prisma/client";
 import { PlanRepository } from "../repositories/PlanRepository";
-import { addHours } from "date-fns";
+import { addHours, differenceInHours, isAfter } from "date-fns";
+import { UserRepository } from "../repositories/UserRepository";
 
 export class PlanService {
-  constructor(private readonly planRepository: PlanRepository) {}
+  constructor(private readonly planRepository: PlanRepository, private readonly userRepository: UserRepository) {}
   async create(plan: Omit<Plan, "id">) {
     return await this.planRepository.create(plan as Plan);
   }
@@ -41,5 +42,53 @@ export class PlanService {
     await this.planRepository.createPlanHistory(userId, user.planId);
   
     return { planId: user.planId, planStartAt: newStartAt, planEndAt: newEndAt };
+  }
+
+
+  async subcribeUserToPlan(userId:string, planId:string){
+    const user = await this.userRepository.findById(userId);
+     
+    if (!user) {
+      throw new Error("Usuario nao encontrado");
+    }
+
+    const { id, planEndAt, planStartAt } = user;
+
+    const currentDate = new Date();
+
+    const plan = await this.planRepository.findById(planId);
+
+    if (!plan) {
+      throw new Error("Plano nao encontrado");
+    }
+
+    const duration = plan?.durationInHours;
+
+    let newPlanStartAt, newPlanEndAt;
+
+    newPlanStartAt = currentDate;
+    newPlanEndAt = addHours(newPlanStartAt, duration);
+
+    if (!!planEndAt && !!planStartAt) {
+      const isOutdated = isAfter(currentDate, planEndAt);
+
+      if (isOutdated) {
+        newPlanEndAt = addHours(newPlanStartAt, duration);
+      }
+
+      if (!isOutdated) {
+        const hoursAvaliable = differenceInHours(planEndAt, currentDate);
+        newPlanEndAt = addHours(newPlanStartAt, hoursAvaliable + duration);
+      }
+    }
+
+    await this.userRepository.subscribePlan({
+      planId,
+      id,
+      planEndAt: newPlanEndAt,
+      planStartAt: newPlanStartAt,
+    });
+
+    
   }
 }

@@ -4,13 +4,17 @@ import { v4 as uuidv4 } from "uuid";
 import { Request } from "../@types/Request";
 import { db } from "../configs/prisma";
 import { UserRepository } from "../repositories/UserRepository";
+import { PlanHistoryRepository } from "../repositories/PlanHistoryRepository";
+import { PlanService } from "../services/PlanService";
 
 const VERCEL_URL = process.env.VERCEL_URL;
+
+interface MercadoPagoResponse { resource: string, topic: string }
 
 export class PaymentController {
   private client: MercadoPagoConfig;
 
-  constructor(private readonly userRepository: UserRepository) {
+  constructor(private readonly userRepository: UserRepository, private readonly planHistoryRepository: PlanHistoryRepository, private readonly planService: PlanService  ) {
     this.client = new MercadoPagoConfig({
       accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN!,
       options: {
@@ -21,20 +25,13 @@ export class PaymentController {
 
   async handleWebhook(req: Request, res: Response) {
     try {
-      const body = await req.body;
-      console.log("body",body)
-      // const paymentId = body.data.id;
+      const body =  req.body as MercadoPagoResponse;
 
-      // if (body.type === "payment") {
-      //   await db.planHistory.updateMany({
-      //     where: {
-      //       paymentId: paymentId,
-      //     },
-      //     data: {
-      //       status: "paid",
-      //     },
-      //   });
-      // }
+     const planHistory = await this.planHistoryRepository.findByPaymentId(body.resource)
+
+     if(!planHistory)  return res.status(404).json({ message: "PlanoHistory nao encontrado" }); 
+
+     await this.planService.subcribeUserToPlan(planHistory.userId, planHistory.planId)
 
       return res.status(200).json({ status: "Pagamento realizado" });
     } catch (error) {
@@ -71,13 +68,14 @@ export class PaymentController {
       if (!user)
         return res.status(404).json({ message: "Usuario nao encontrado" });
 
-      await db.planHistory.create({
-        data: {
-          paymentId: response.id!.toString(), 
+      if (!body.planId)
+        return res.status(404).json({ message: "Plano nao encontrado" });
+
+      await this.planHistoryRepository.create({
+          paymentId: response.id!.toString()!, 
           userId: user.id, 
           planId: body.planId,
-          status: "pending", 
-        },
+         status:"pending",
       });
 
       const pixQrCode =

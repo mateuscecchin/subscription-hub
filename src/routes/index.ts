@@ -12,21 +12,23 @@ import { VersionRepository } from "../repositories/VersionRepository";
 import { VersionService } from "../services/VersionService";
 import { VersionController } from "../controllers/VersionController";
 import { PaymentController } from "../controllers/PaymentController";
+import { PlanHistoryRepository } from "../repositories/PlanHistoryRepository";
 
 const userRepository = new UserRepository();
 const planRepository = new PlanRepository();
+const planHistoryRepository = new PlanHistoryRepository();
 const versionRepository = new VersionRepository();
 
 const userService = new UserService(userRepository);
 const authService = new AuthService(userRepository);
-const planService = new PlanService(planRepository);
+const planService = new PlanService(planRepository, userRepository);
 const versionSerivce = new VersionService(versionRepository);
 
 const authController = new AuthController(authService);
 const userController = new UserController(userService, planService);
 const planController = new PlanController(planService);
 const versionController = new VersionController(versionSerivce);
-const paymentController = new PaymentController(userRepository);
+const paymentController = new PaymentController(userRepository, planHistoryRepository, planService);
 
 export const routes = Router();
 

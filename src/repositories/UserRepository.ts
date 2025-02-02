@@ -30,4 +30,16 @@ export class UserRepository {
   async delete(id: string) {
     return await db.user.delete({ where: { id } });
   }
+  async subscribePlan({
+    id,
+    planId,
+    planEndAt,
+    planStartAt,
+  }: Pick<User, "planId" | "planEndAt" | "planStartAt" | "id">) {
+    return await db.user.update({ where:{id}, data:{
+      planId,
+      planStartAt,
+      planEndAt,
+    }});
+  }
 }
