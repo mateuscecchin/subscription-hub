@@ -35,7 +35,6 @@ model Plan {
   durationInHours Int
   price           Int
   name            String
-
   users       User[]
   planHistory PlanHistory[]
 
@@ -50,6 +49,8 @@ model PlanHistory {
 
   plan Plan? @relation(fields: [planId], references: [id])
   user User? @relation(fields: [userId], references: [id])
+  paymentId String?
+  status    String?   @default("pending") 
 
   @@map("history")
 }

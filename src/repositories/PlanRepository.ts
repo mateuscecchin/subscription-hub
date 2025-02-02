@@ -22,4 +22,25 @@ export class PlanRepository {
   async findById(id: string) {
     return await db.plan.findUnique({ where: { id } });
   }
+  async findUserById(userId: string) {
+    return await db.user.findUnique({
+      where: { id: userId },
+      include: { plan: true },
+    });
+  }
+
+  async updateUserPlan(userId: string, updateData: { planStartAt: Date; planEndAt: Date }) {
+    return await db.user.update({
+      where: { id: userId },
+      data: updateData,
+    });
+  }
+
+  async createPlanHistory(userId: string, planId: string) {
+    return await db.planHistory.create({
+      data: { userId, planId },
+    });
+  }
+
+  
 }
