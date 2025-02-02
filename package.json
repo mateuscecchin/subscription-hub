@@ -1,13 +1,13 @@
 {
   "name": "blackbot-api",
   "version": "1.0.0",
-  "main": "./src/index.ts","scripts": {
-  "dev": "nodemon ./src/index.ts",
-  "build": "tsc",
-  "start": "node dist/index.js",
-  "vercel-build": "npm run build && npx prisma migrate deploy",
-  "postinstall": "prisma generate"
-},
+  "main": "./src/index.ts",
+  "scripts": {
+    "dev": "nodemon ./src/index.ts",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "vercel-build": "npx prisma migrate deploy",
+    "postinstall": "prisma generate"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
