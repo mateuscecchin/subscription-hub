@@ -4,6 +4,8 @@ dotenv.config();
 
 const port = process.env.PORT;
 
-app.listen(port, () => {
-  console.log(`Server listen on port ${port}`);
-});
+// app.listen(port, () => {
+//   console.log(`Server listen on port ${port}`);
+// });
+
+export default app;
