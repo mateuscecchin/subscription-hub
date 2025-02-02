@@ -43,15 +43,23 @@ export class PaymentController {
   async createPayment(req: Request, res: Response) {
     try {
       const body = req.body!;
+      const user = req.user!
 
       const payment = new Payment(this.client);
 
+      if (!user)
+        return res.status(404).json({ message: "Usuario nao encontrado" });
+      
+      const plan = await this.planService.findById(body.planId)
+
+      if(!plan)  return res.status(404).json({ message: "Plano nao encontrado" }); 
+
         const responsePayment = {
-          transaction_amount: body.transaction_amount,
-          description: body.description,
+          transaction_amount: plan.price,
+          description: "Pagamento acesso do bot",
           payment_method_id: "pix",
           payer: {
-            email: body.email,
+            email: user.email,
           },
           notification_url: "https://subscription-hub-dusky.vercel.app/webhook",
         };
@@ -63,18 +71,10 @@ export class PaymentController {
         requestOptions,
       });
 
-      const user = await this.userRepository.findByEmail(body.email);
-
-      if (!user)
-        return res.status(404).json({ message: "Usuario nao encontrado" });
-
-      if (!body.planId)
-        return res.status(404).json({ message: "Plano nao encontrado" });
-
       await this.planHistoryRepository.create({
           paymentId: response.id!.toString()!, 
           userId: user.id, 
-          planId: body.planId,
+          planId: plan.id,
          status:"pending",
       });
 
