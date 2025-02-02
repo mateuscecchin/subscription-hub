@@ -36,7 +36,7 @@ export class PaymentController {
       //   });
       // }
 
-      // return res.status(200).json({ status: "Pagamento realizado" });
+      return res.status(200).json({ status: "Pagamento realizado" });
     } catch (error) {
       console.error("Erro no webhook:", error);
       return res.status(500).json({ error: "Webhook error" });
