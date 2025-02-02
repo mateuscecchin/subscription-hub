@@ -48,4 +48,17 @@ export class PlanController {
       console.log("[ERROR CREATE PLAN]", err);
     }
   }
+  
+  async renew(req: Request, res: Response) {
+    try {
+      const userId = req.user!.id;
+  
+      const renewedPlan = await this.planService.renewPlan(userId);
+  
+      res.status(200).json({ message: "Plano renovado com sucesso!", renewedPlan });
+    } catch (err: any) {
+      res.status(500).json({ message: err.message });
+    }
+  }
+
 }

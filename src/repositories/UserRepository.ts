@@ -3,7 +3,7 @@ import { db } from "../configs/prisma";
 
 export class UserRepository {
   async create(user: User) {
-    return await db.user.create({ data: user });
+    return await db.user.create({ data: user  });
   }
 
   async update(user: Partial<User>) {

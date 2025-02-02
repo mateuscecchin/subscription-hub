@@ -11,6 +11,7 @@ import { authenticate } from "../middlewares/authentication";
 import { VersionRepository } from "../repositories/VersionRepository";
 import { VersionService } from "../services/VersionService";
 import { VersionController } from "../controllers/VersionController";
+import { PaymentController } from "../controllers/PaymentController";
 
 const userRepository = new UserRepository();
 const planRepository = new PlanRepository();
@@ -25,6 +26,7 @@ const authController = new AuthController(authService);
 const userController = new UserController(userService, planService);
 const planController = new PlanController(planService);
 const versionController = new VersionController(versionSerivce);
+const paymentController = new PaymentController(userRepository);
 
 export const routes = Router();
 
@@ -43,3 +45,8 @@ routes.get("/user/me", (req, res) => userController.me(req, res));
 routes.get("/user", (req, res) => userController.findAll(req, res));
 routes.delete("/user", (req, res) => userController.delete(req, res));
 routes.post("/user/plan", (req, res) => userController.plan(req, res));
+
+routes.post("/plan/renew", (req, res) => planController.renew(req, res));
+
+routes.post("/payment", (req, res) => paymentController.createPayment(req, res));
+routes.post("/webhook", (req, res) => paymentController.handleWebhook(req, res));
