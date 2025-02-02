@@ -36,6 +36,7 @@ routes.get("/plan", (req, res) => planController.findAll(req, res));
 routes.get("/version", (req, res) =>
   versionController.findLastVersion(req, res)
 );
+routes.post("/webhook", (req, res) => paymentController.handleWebhook(req, res));
 
 routes.use("/", authenticate);
 
@@ -49,4 +50,3 @@ routes.post("/user/plan", (req, res) => userController.plan(req, res));
 routes.post("/plan/renew", (req, res) => planController.renew(req, res));
 
 routes.post("/payment", (req, res) => paymentController.createPayment(req, res));
-routes.post("/webhook", (req, res) => paymentController.handleWebhook(req, res));

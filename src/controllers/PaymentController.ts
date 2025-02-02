@@ -22,20 +22,21 @@ export class PaymentController {
   async handleWebhook(req: Request, res: Response) {
     try {
       const body = await req.body;
-      const paymentId = body.data.id;
+      console.log("body",body)
+      // const paymentId = body.data.id;
 
-      if (body.type === "payment") {
-        await db.planHistory.updateMany({
-          where: {
-            paymentId: paymentId,
-          },
-          data: {
-            status: "paid",
-          },
-        });
-      }
+      // if (body.type === "payment") {
+      //   await db.planHistory.updateMany({
+      //     where: {
+      //       paymentId: paymentId,
+      //     },
+      //     data: {
+      //       status: "paid",
+      //     },
+      //   });
+      // }
 
-      return res.status(200).json({ status: "Pagamento realizado" });
+      // return res.status(200).json({ status: "Pagamento realizado" });
     } catch (error) {
       console.error("Erro no webhook:", error);
       return res.status(500).json({ error: "Webhook error" });
