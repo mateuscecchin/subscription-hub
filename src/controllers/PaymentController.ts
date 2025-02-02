@@ -48,15 +48,15 @@ export class PaymentController {
 
       const payment = new Payment(this.client);
 
-      const responsePayment = {
-        transaction_amount: body.transaction_amount,
-        description: body.description,
-        payment_method_id: "pix",
-        payer: {
-          email: body.email,
-        },
-        notification_url: `${VERCEL_URL}/webhook`,
-      };
+        const responsePayment = {
+          transaction_amount: body.transaction_amount,
+          description: body.description,
+          payment_method_id: "pix",
+          payer: {
+            email: body.email,
+          },
+          notification_url: "https://subscription-hub-dusky.vercel.app/webhook",
+        };
 
       const requestOptions = { idempotencyKey: uuidv4() };
 
