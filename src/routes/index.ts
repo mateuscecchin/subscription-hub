@@ -30,6 +30,10 @@ const paymentController = new PaymentController(userRepository);
 
 export const routes = Router();
 
+routes.get('/api', (req, res) => {
+  res.json({ message: 'API funcionando!' });
+});
+
 routes.post("/user", (req, res) => userController.create(req, res));
 routes.post("/login", (req, res) => authController.logIn(req, res));
 routes.get("/plan", (req, res) => planController.findAll(req, res));
