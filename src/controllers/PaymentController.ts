@@ -27,6 +27,8 @@ export class PaymentController {
     try {
       const body =  req.body as MercadoPagoResponse;
 
+      console.log("body", body)
+
      const planHistory = await this.planHistoryRepository.findByPaymentId(body.resource)
 
      if(!planHistory)  return res.status(404).json({ message: "PlanoHistory nao encontrado" }); 
