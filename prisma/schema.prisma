@@ -33,7 +33,7 @@ model Plan {
   id              String @id @default(uuid())
   description     String
   durationInHours Int
-  price           Int
+  price           Float
   name            String
   users       User[]
   planHistory PlanHistory[]

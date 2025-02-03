@@ -9,7 +9,16 @@ import { PlanService } from "../services/PlanService";
 
 const VERCEL_URL = process.env.VERCEL_URL;
 
-interface MercadoPagoResponse { resource: string, topic: string }
+interface MercadoPagoResponse {
+  action: "payment.created"|"payment.updated",
+  api_version: string,
+  data: { id: string },
+  date_created: string,
+  id: number,
+  live_mode: boolean,
+  type: string,
+  user_id: string
+}
 
 export class PaymentController {
   private client: MercadoPagoConfig;
@@ -27,13 +36,24 @@ export class PaymentController {
     try {
       const body =  req.body as MercadoPagoResponse;
 
-      console.log("body", body)
+      if(body?.action == "payment.created"){
+       return res.status(200).json({ message: "QRCODE gerado com sucesso" }); 
+      }
 
-     const planHistory = await this.planHistoryRepository.findByPaymentId(body.resource)
+     const planHistory = await this.planHistoryRepository.findByPaymentId(body.data.id)
 
      if(!planHistory)  return res.status(404).json({ message: "PlanoHistory nao encontrado" }); 
 
+     if(planHistory.status == "complete"){
+      return  res.status(500).json({ message: "Pagamento já realizado" }); 
+     }
+
      await this.planService.subcribeUserToPlan(planHistory.userId, planHistory.planId)
+
+     await this.planHistoryRepository.update({
+       ...planHistory,
+       status: "complete"
+     })
 
       return res.status(200).json({ status: "Pagamento realizado" });
     } catch (error) {
