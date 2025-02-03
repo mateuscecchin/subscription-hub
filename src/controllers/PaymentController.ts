@@ -36,11 +36,11 @@ export class PaymentController {
     try {
       const body =  req.body as MercadoPagoResponse;
 
-      if(body?.action == "payment.created"){
-       return res.status(200).json({ message: "QRCODE gerado com sucesso" }); 
+      if(body?.action != "payment.updated"){
+       return res.status(500).json({ message: "Tipo de notificação nao suportaddo." }); 
       }
 
-     const planHistory = await this.planHistoryRepository.findByPaymentId(body.data.id)
+     const planHistory = await this.planHistoryRepository.findByPaymentId(body?.data.id)
 
      if(!planHistory)  return res.status(404).json({ message: "PlanoHistory nao encontrado" }); 
 
@@ -72,7 +72,7 @@ export class PaymentController {
       if (!user)
         return res.status(404).json({ message: "Usuario nao encontrado" });
       
-      const plan = await this.planService.findById(body.planId)
+      const plan = await this.planService.findByCoupon(body.coupon)
 
       if(!plan)  return res.status(404).json({ message: "Plano nao encontrado" }); 
 

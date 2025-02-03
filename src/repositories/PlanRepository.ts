@@ -22,6 +22,10 @@ export class PlanRepository {
   async findById(id: string) {
     return await db.plan.findUnique({ where: { id } });
   }
+
+  async findByCoupon(coupon: string) {
+    return await db.plan.findFirst({ where: { coupon } });
+  }
   async findUserById(userId: string) {
     return await db.user.findUnique({
       where: { id: userId },

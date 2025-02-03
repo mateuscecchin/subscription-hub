@@ -88,7 +88,8 @@ export class PlanService {
       planEndAt: newPlanEndAt,
       planStartAt: newPlanStartAt,
     });
-
-    
+  }
+  async findByCoupon(coupon: string) {
+    return await this.planRepository.findByCoupon(coupon);
   }
 }

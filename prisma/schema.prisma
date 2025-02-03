@@ -34,6 +34,7 @@ model Plan {
   description     String
   durationInHours Int
   price           Float
+  coupon          String @unique 
   name            String
   users       User[]
   planHistory PlanHistory[]
