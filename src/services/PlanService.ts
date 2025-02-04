@@ -4,7 +4,10 @@ import { addHours, differenceInHours, isAfter } from "date-fns";
 import { UserRepository } from "../repositories/UserRepository";
 
 export class PlanService {
-  constructor(private readonly planRepository: PlanRepository, private readonly userRepository: UserRepository) {}
+  constructor(
+    private readonly planRepository: PlanRepository,
+    private readonly userRepository: UserRepository
+  ) {}
   async create(plan: Omit<Plan, "id">) {
     return await this.planRepository.create(plan as Plan);
   }
@@ -18,36 +21,40 @@ export class PlanService {
   }
   async renewPlan(userId: string) {
     const user = await this.planRepository.findUserById(userId);
-  
+
     if (!user || !user.planId) {
       throw new Error("Usuário não possui um plano ativo.");
     }
-  
+
     const plan = await this.planRepository.findById(user.planId);
-  
+
     if (!plan) {
       throw new Error("Plano não encontrado.");
     }
-  
+
     // Estendendo a assinatura a partir da data atual ou da data de vencimento atual
     const now = new Date();
-    const newStartAt = user.planEndAt && user.planEndAt > now ? user.planEndAt : now;
+    const newStartAt =
+      user.planEndAt && user.planEndAt > now ? user.planEndAt : now;
     const newEndAt = addHours(newStartAt, plan.durationInHours);
-  
+
     await this.planRepository.updateUserPlan(userId, {
       planStartAt: newStartAt,
       planEndAt: newEndAt,
     });
-  
+
     await this.planRepository.createPlanHistory(userId, user.planId);
-  
-    return { planId: user.planId, planStartAt: newStartAt, planEndAt: newEndAt };
+
+    return {
+      planId: user.planId,
+      planStartAt: newStartAt,
+      planEndAt: newEndAt,
+    };
   }
 
-
-  async subcribeUserToPlan(userId:string, planId:string){
+  async subcribeUserToPlan(userId: string, planId: string) {
     const user = await this.userRepository.findById(userId);
-     
+
     if (!user) {
       throw new Error("Usuario nao encontrado");
     }

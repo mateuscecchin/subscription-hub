@@ -1,18 +1,18 @@
 import { Router } from "express";
-import { UserRepository } from "../repositories/UserRepository";
-import { UserService } from "../services/UserService";
-import { AuthService } from "../services/AuthService";
 import { AuthController } from "../controllers/AuthController";
-import { UserController } from "../controllers/UserController";
-import { PlanRepository } from "../repositories/PlanRepository";
-import { PlanService } from "../services/PlanService";
-import { PlanController } from "../controllers/PlanController";
-import { authenticate } from "../middlewares/authentication";
-import { VersionRepository } from "../repositories/VersionRepository";
-import { VersionService } from "../services/VersionService";
-import { VersionController } from "../controllers/VersionController";
 import { PaymentController } from "../controllers/PaymentController";
+import { PlanController } from "../controllers/PlanController";
+import { UserController } from "../controllers/UserController";
+import { VersionController } from "../controllers/VersionController";
+import { authenticate } from "../middlewares/authentication";
 import { PlanHistoryRepository } from "../repositories/PlanHistoryRepository";
+import { PlanRepository } from "../repositories/PlanRepository";
+import { UserRepository } from "../repositories/UserRepository";
+import { VersionRepository } from "../repositories/VersionRepository";
+import { AuthService } from "../services/AuthService";
+import { PlanService } from "../services/PlanService";
+import { UserService } from "../services/UserService";
+import { VersionService } from "../services/VersionService";
 
 const userRepository = new UserRepository();
 const planRepository = new PlanRepository();
@@ -28,7 +28,11 @@ const authController = new AuthController(authService);
 const userController = new UserController(userService, planService);
 const planController = new PlanController(planService);
 const versionController = new VersionController(versionSerivce);
-const paymentController = new PaymentController(userRepository, planHistoryRepository, planService);
+const paymentController = new PaymentController(
+  userRepository,
+  planHistoryRepository,
+  planService
+);
 
 export const routes = Router();
 
@@ -38,7 +42,9 @@ routes.get("/plan", (req, res) => planController.findAll(req, res));
 routes.get("/version", (req, res) =>
   versionController.findLastVersion(req, res)
 );
-routes.post("/webhook", (req, res) => paymentController.handleWebhook(req, res));
+routes.post("/webhook", (req, res) =>
+  paymentController.handleWebhook(req, res)
+);
 
 routes.use("/", authenticate);
 
@@ -49,6 +55,10 @@ routes.get("/user", (req, res) => userController.findAll(req, res));
 routes.delete("/user", (req, res) => userController.delete(req, res));
 routes.post("/user/plan", (req, res) => userController.plan(req, res));
 
+routes.post("/payment", (req, res) =>
+  paymentController.createPayment(req, res)
+);
+
 routes.post("/plan/renew", (req, res) => planController.renew(req, res));
 
-routes.post("/payment", (req, res) => paymentController.createPayment(req, res));
+routes.post("/version", (req, res) => versionController.create(req, res));

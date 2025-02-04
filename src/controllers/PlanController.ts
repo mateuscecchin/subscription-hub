@@ -33,13 +33,14 @@ export class PlanController {
 
   async create(req: Request, res: Response) {
     try {
-      const { description, name, durationInHours, price } = req.body!;
+      const { description, name, durationInHours, price, coupon } = req.body!;
 
       await this.planService.create({
         description,
         name,
         durationInHours,
         price,
+        coupon,
       });
 
       res.status(201).json({ message: "Plano criado com sucesso!" });
@@ -52,10 +53,12 @@ export class PlanController {
   async renew(req: Request, res: Response) {
     try {
       const userId = req.user!.id;
-  
+
       const renewedPlan = await this.planService.renewPlan(userId);
-  
-      res.status(200).json({ message: "Plano renovado com sucesso!", renewedPlan });
+
+      res
+        .status(200)
+        .json({ message: "Plano renovado com sucesso!", renewedPlan });
     } catch (err: any) {
       res.status(500).json({ message: err.message });
     }
